@@ -8,12 +8,192 @@ warnings.filterwarnings('ignore')
 
 # 페이지 설정
 st.set_page_config(
-    page_title="펀드 분석 및 최적화 도구",
-    page_icon="📊",
+    page_title="[글로벌자산배분전략위원회] Quantitative Sleeve Allocation",
     layout="wide"
 )
 
-st.title("📊 펀드 분석 및 최적화 도구")
+# 폰트 크기 조정 CSS
+st.markdown("""
+    <style>
+        /* 전체 텍스트 크기 조정 */
+        html, body, [class*="css"] {
+            font-size: 12px !important;
+        }
+
+        /* 헤더 크기 조정 */
+        h1 {
+            font-size: 1.4rem !important;
+        }
+
+        h2 {
+            font-size: 1.2rem !important;
+        }
+
+        h3 {
+            font-size: 1.1rem !important;
+        }
+
+        /* 본문 텍스트 */
+        p, div, span {
+            font-size: 12px !important;
+        }
+
+        /* 메트릭 컴포넌트 */
+        [data-testid="stMetricValue"] {
+            font-size: 1.2rem !important;
+        }
+
+        [data-testid="stMetricLabel"] {
+            font-size: 0.9rem !important;
+        }
+
+        /* 데이터프레임 */
+        .dataframe {
+            font-size: 11px !important;
+        }
+
+        /* 사이드바 */
+        [data-testid="stSidebar"] {
+            font-size: 12px !important;
+        }
+
+        /* 라디오 버튼, 체크박스 등 */
+        label {
+            font-size: 12px !important;
+        }
+
+        /* 입력 필드 */
+        input, select, textarea {
+            font-size: 12px !important;
+        }
+
+        /* 버튼 */
+        button {
+            font-size: 12px !important;
+        }
+
+        /* 정보/경고 메시지 */
+        [data-baseweb="notification"] {
+            font-size: 11px !important;
+        }
+
+        /* 테이블 스타일 개선 */
+        .dataframe {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            table-layout: fixed !important;
+        }
+
+        .dataframe th {
+            background: linear-gradient(180deg, #1f2937 0%, #111827 100%) !important;
+            color: #fafafa !important;
+            font-weight: 600 !important;
+            padding: 10px 8px !important;
+            text-align: center !important;
+            border: 1px solid #374151 !important;
+            font-size: 11px !important;
+        }
+
+        .dataframe td {
+            padding: 10px 8px !important;
+            text-align: center !important;
+            border: 1px solid #374151 !important;
+            background-color: #1f2937 !important;
+            color: #e5e7eb !important;
+            font-size: 11px !important;
+        }
+
+        .dataframe tbody tr:nth-child(even) {
+            background-color: #1a1f2e !important;
+        }
+
+        .dataframe tbody tr:nth-child(even) td {
+            background-color: #1a1f2e !important;
+        }
+
+        .dataframe tbody tr:hover {
+            background-color: #374151 !important;
+        }
+
+        .dataframe tbody tr:hover td {
+            background-color: #374151 !important;
+        }
+
+        /* 칼럼 너비 동일하게 설정 - 모든 칼럼 동일한 너비 */
+        .dataframe {
+            table-layout: fixed !important;
+        }
+
+        .dataframe th,
+        .dataframe td {
+            width: 12.5% !important;
+            word-wrap: break-word !important;
+        }
+
+        /* 첫 번째 칼럼(SLEEVE)과 마지막 칼럼(GROUP)도 동일한 너비 */
+        .dataframe th:first-child,
+        .dataframe td:first-child,
+        .dataframe th:last-child,
+        .dataframe td:last-child {
+            width: 12.5% !important;
+            text-align: left !important;
+            font-weight: 500 !important;
+        }
+
+        /* 숫자 칼럼 우측 정렬 및 폰트 */
+        .dataframe td:nth-child(n+2):not(:last-child) {
+            text-align: right !important;
+            font-family: 'Courier New', monospace !important;
+            font-weight: 500 !important;
+        }
+
+        .dataframe th:nth-child(n+2):not(:last-child) {
+            text-align: right !important;
+        }
+
+        /* 3열 설정 부분 세로 구분선 */
+        [data-testid="column"]:not(:last-child) {
+            border-right: 2px solid #000000 !important;
+            padding-right: 20px !important;
+            margin-right: 0 !important;
+        }
+
+        [data-testid="column"]:not(:first-child) {
+            padding-left: 20px !important;
+            margin-left: 0 !important;
+        }
+
+        /* 컬럼 컨테이너에 구분선 추가 */
+        div[data-testid="column"]:not(:last-child) {
+            position: relative;
+        }
+
+        div[data-testid="column"]:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            right: -1px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #000000;
+            z-index: 1;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# ReadMe 섹션
+st.markdown("""
+    <div style="font-size: 10px;">
+        <strong>ReadMe</strong><br>
+        1. 정해진 양식의 엑셀파일을 업로드한 후 최적화를 수행합니다. <br> 
+        2. 사이드바에서 펀드(530810 or 530950)를 선택할 수 있습니다. <br> 
+        3. 최적화의 기대수익률은 과거수익률 활용, 위원회 스코어링 결과 적용, 몬테칼로 시뮬레이션 방법을 선택할 수 있습니다. <br> 
+        4. 최적화는 Max Sharpe, Min Risk, Risk Parity 세 가지를 적용합니다. <br> 
+        5. 최적화 결과는 테이블로 조회할 수 있고, CSV 파일로 다운로드할 수 있습니다. <br> 
+    </div>
+""", unsafe_allow_html=True)
+
+st.title("[글로벌자산배분전략위원회] Quantitative Sleeve Allocation")
 
 # 세션 상태 초기화
 if 'uploaded_file' not in st.session_state:
@@ -677,6 +857,13 @@ def optimize_portfolio(Current_filtered, Gr_MinMax_filtered, expected_returns, v
 
 # 사이드바: 파일 업로드
 with st.sidebar:
+    # 이미지 표시
+    image_path = "images/miraeasset.png"
+    try:
+        st.image(image_path, use_container_width=True)
+    except:
+        st.warning("이미지를 불러올 수 없습니다.")
+
     st.header("📁 데이터 업로드")
     uploaded_file = st.file_uploader("엑셀 파일을 업로드하세요", type=['xlsx', 'xls'])
 
@@ -693,7 +880,22 @@ with st.sidebar:
                     st.session_state.Current_df = Current_df
                     st.session_state.Gr_MinMax_df = Gr_MinMax_df
                     st.session_state.data_loaded = True
+
+                    # 최근자료일 계산
+                    if 'DATE' in price_df.columns:
+                        price_df_date = price_df.copy()
+                        price_df_date['DATE'] = pd.to_datetime(price_df_date['DATE'], errors='coerce')
+                        latest_date = price_df_date['DATE'].max()
+                        if pd.isna(latest_date):
+                            latest_date = pd.Timestamp.today()
+                        st.session_state.latest_date = latest_date
+                    else:
+                        # DATE 칼럼이 없으면 오늘 날짜 사용
+                        latest_date = pd.Timestamp.today()
+                        st.session_state.latest_date = latest_date
+
                     st.success("데이터 로드 완료!")
+                    st.info(f"as of: {st.session_state.latest_date.strftime('%Y-%m-%d')}")
 
         if st.session_state.data_loaded:
             st.header("⚙️ 설정")
@@ -739,54 +941,91 @@ if st.session_state.data_loaded and st.session_state.fund_selected:
 
     st.header("📈 요약 정보")
 
-    # Sleeve별 비중 표시
+    # Sleeve별 비중 표시 (하나의 테이블로 통합)
+    st.subheader("Sleeve별 정보")
+    weight_df = Current_filtered[['SLEEVE', weight_col, 'DUR', min_col, max_col, 'GROUP']].copy()
+    total_weight = weight_df[weight_col].sum()
+
+    # 원본 비중을 % 형식으로 변환 (0.11 -> 11.00%)
+    weight_df['원본 비중 (%)'] = (weight_df[weight_col] * 100).round(2).apply(lambda x: f"{x:.2f}")
+
+    # 100% 환산 비중 계산
+    weight_df['100% 환산 비중 (%)'] = (weight_df[weight_col] / total_weight * 100).round(2).apply(lambda x: f"{x:.2f}")
+
+    # MIN/MAX 비중을 % 형식으로 변환
+    weight_df['최소 비중 (%)'] = (weight_df[min_col] * 100).round(2).apply(lambda x: f"{x:.2f}")
+    weight_df['최대 비중 (%)'] = (weight_df[max_col] * 100).round(2).apply(lambda x: f"{x:.2f}")
+
+    # DUR 포맷팅
+    weight_df['DUR'] = weight_df['DUR'].apply(lambda x: f"{x:.2f}" if pd.notna(x) else "-")
+
+    # EXPECTED_R이 있으면 추가
+    if 'EXPECTED_R' in Current_filtered.columns:
+        expected_r_dict = Current_filtered.groupby('SLEEVE')['EXPECTED_R'].first().to_dict()
+        weight_df['스코어링 기대수익률 (%)'] = weight_df['SLEEVE'].map(
+            lambda
+                x: f"{round(expected_r_dict.get(x, 0) * 100 if expected_r_dict.get(x, 0) < 1.0 else expected_r_dict.get(x, 0), 2):.2f}"
+        )
+        # 최종 테이블 (SLEEVE, 원본 비중, 100% 환산 비중, DUR, 최소 비중, 최대 비중, 스코어링 기대수익률, GROUP)
+        weight_display_df = weight_df[['SLEEVE', '원본 비중 (%)', '100% 환산 비중 (%)', 'DUR',
+                                       '최소 비중 (%)', '최대 비중 (%)', '스코어링 기대수익률 (%)', 'GROUP']].copy()
+    else:
+        # 최종 테이블 (EXPECTED_R이 없는 경우)
+        weight_display_df = weight_df[['SLEEVE', '원본 비중 (%)', '100% 환산 비중 (%)', 'DUR',
+                                       '최소 비중 (%)', '최대 비중 (%)', 'GROUP']].copy()
+
+    st.dataframe(weight_display_df, use_container_width=True, hide_index=True)
+
+    # 그룹별 비중 제약 표시 및 듀레이션 계산을 2열로 배치
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("Sleeve별 비중 (원본)")
-        weight_df = Current_filtered[['SLEEVE', weight_col]].copy()
-        weight_df = weight_df.rename(columns={weight_col: '비중'})
-        st.dataframe(weight_df, use_container_width=True)
+        # 그룹별 비중 제약 표시
+        st.subheader("그룹별 비중 제약")
+        group_min_col = 'MIN_' + weight_col.replace('F', '')
+        group_max_col = 'MAX_' + weight_col.replace('F', '')
+
+        # 컬럼 존재 여부 확인
+        if group_min_col in Gr_MinMax_filtered.columns and group_max_col in Gr_MinMax_filtered.columns:
+            # 그룹별 MIN/MAX 비중을 % 형식으로 변환
+            group_df = Gr_MinMax_filtered[['GROUP', group_min_col, group_max_col]].copy()
+            group_df['최소 비중 (%)'] = (group_df[group_min_col] * 100).round(2)
+            group_df['최대 비중 (%)'] = (group_df[group_max_col] * 100).round(2)
+
+            group_display_df = group_df[['GROUP', '최소 비중 (%)', '최대 비중 (%)']].copy()
+            st.dataframe(group_display_df, use_container_width=True, hide_index=True)
+        else:
+            st.warning(f"⚠️ 그룹별 비중 제약 컬럼({group_min_col}, {group_max_col})을 찾을 수 없습니다.")
 
     with col2:
-        st.subheader("Sleeve별 비중 (100% 환산)")
-        total_weight = weight_df['비중'].sum()
-        weight_df_normalized = weight_df.copy()
-        weight_df_normalized['100% 환산 비중'] = (weight_df_normalized['비중'] / total_weight * 100).round(2)
-        st.dataframe(weight_df_normalized[['SLEEVE', '100% 환산 비중']], use_container_width=True)
-
-    # 듀레이션 계산
-    st.subheader("펀드 듀레이션")
-    dur_df = Current_filtered[['SLEEVE', 'DUR', weight_col]].copy()
-    dur_df['비중'] = dur_df[weight_col] / dur_df[weight_col].sum()
-    portfolio_duration = (dur_df['DUR'] * dur_df['비중']).sum()
-    st.metric("포트폴리오 듀레이션", f"{portfolio_duration:.2f}")
+        # 듀레이션 계산
+        st.subheader("펀드 듀레이션")
+        dur_df = Current_filtered[['SLEEVE', 'DUR', weight_col]].copy()
+        dur_df['비중'] = dur_df[weight_col] / dur_df[weight_col].sum()
+        portfolio_duration = (dur_df['DUR'] * dur_df['비중']).sum()
+        st.markdown(f'<p style="font-size: 14px;">포트폴리오 듀레이션: {portfolio_duration:.2f}</p>', unsafe_allow_html=True)
 
     # 최적화 섹션
-    st.header("🔧 최적화 설정")
+    st.header("최적화 설정")
 
-    tab1, tab2, tab3 = st.tabs(["기대수익률 설정", "변동성 설정", "제약조건 설정"])
+    # 설명 텍스트
+    st.markdown("""
+    - 수익률/변동성은 3개월 기간 수익률/변동성으로 계산됩니다.
+    - 개별 Sleeve별 비중은 위의 'Sleeve별 정보' 테이블의 최소, 최대비중을 적용합니다.
+    - 그룹비중합 제약은 '그룹별 비중 제약' 테이블의 최소, 최대 비중을 적용합니다.
+    """)
 
-    with tab1:
+    # 3열 레이아웃으로 설정 표시
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.subheader("기대수익률 설정")
         return_method = st.radio(
             "기대수익률 계산 방법",
             ["과거수익률", "위원회 스코어링 결과", "몬테칼로 시뮬레이션"]
         )
 
-        if return_method == "위원회 스코어링 결과":
-            st.info("Current 시트의 EXPECTED_R 칼럼에서 기대수익률을 읽어옵니다. (EXPECTED_R은 3개월 기간 수익률입니다)")
-            if 'EXPECTED_R' in Current_filtered.columns:
-                st.subheader("Sleeve별 기대수익률 (EXPECTED_R)")
-                expected_r_df = Current_filtered[['SLEEVE', 'EXPECTED_R']].groupby('SLEEVE').first()
-                st.dataframe(expected_r_df, use_container_width=True)
-            else:
-                st.warning("Current 시트에 EXPECTED_R 칼럼이 없습니다.")
-            # 위원회 스코어링 결과를 선택한 경우에도 return_period는 필요 없지만,
-            # 코드 일관성을 위해 기본값 설정 (실제로는 사용되지 않음)
-            return_period = 3
-        else:
-            st.info("💡 수익률은 항상 3개월 기간 수익률로 계산됩니다.")
-
+        if return_method != "위원회 스코어링 결과":
             return_period = st.number_input(
                 "참조 기간 (개월)",
                 min_value=1,
@@ -794,10 +1033,13 @@ if st.session_state.data_loaded and st.session_state.fund_selected:
                 step=1,
                 help="과거수익률이나 몬테칼로 시뮬레이션 분석에 사용할 과거 데이터 기간 (개월 수). 이 기간의 데이터를 사용하여 3개월 기간 수익률을 계산합니다."
             )
+        else:
+            # 위원회 스코어링 결과를 선택한 경우에도 return_period는 필요 없지만,
+            # 코드 일관성을 위해 기본값 설정 (실제로는 사용되지 않음)
+            return_period = 3
 
-    with tab2:
-        st.info("💡 변동성은 항상 3개월 기간 변동성으로 계산됩니다.")
-
+    with col2:
+        st.subheader("변동성 설정")
         vol_period = st.number_input(
             "변동성 참조 기간 (개월)",
             min_value=1,
@@ -806,7 +1048,8 @@ if st.session_state.data_loaded and st.session_state.fund_selected:
             help="과거변동성을 계산할 때 참조할 과거 데이터 기간 (개월 수). 이 기간의 데이터를 사용하여 3개월 기간 변동성을 계산합니다."
         )
 
-    with tab3:
+    with col3:
+        st.subheader("제약조건 설정")
         dur_buffer = st.number_input(
             "DUR 제약 버퍼 (%)",
             min_value=0.0,
@@ -816,26 +1059,21 @@ if st.session_state.data_loaded and st.session_state.fund_selected:
             help="현재 DUR에 플러스 마이너스 가능한 퍼센트"
         )
 
-        st.subheader("비중 제약")
-        st.info("개별 SLEEVE별 비중: Current 시트의 MIN/MAX 적용")
-        st.info("그룹비중합: Gr_MinMax 시트의 그룹별 MIN/MAX 적용")
+    # 텍스트 메시지는 3열 아래 행에 표시
+    if return_method == "위원회 스코어링 결과":
+        st.info("스코어링 기준 기대수익률은 'Sleeve별 정보' 테이블에 표시되어 있습니다.")
 
-    # 목적함수 선택
-    st.subheader("목적함수 선택")
-    objective = st.radio(
-        "최적화 목적함수",
-        ["Max Sharpe", "Min Risk", "Risk Parity"]
+    # Risk-free Rate 입력 (Max Sharpe에 필요)
+    st.subheader("Risk-free Rate")
+    risk_free_rate = st.number_input(
+        "Risk-free Rate (%)",
+        value=0.0,
+        step=0.1,
+        help="Max Sharpe 최적화에 사용됩니다."
     )
 
-    if objective == "Max Sharpe":
-        risk_free_rate = st.number_input(
-            "Risk-free Rate (%)",
-            value=0.0,
-            step=0.1
-        )
-
     # 최적화 실행 버튼
-    if st.button("🚀 최적화 실행", type="primary"):
+    if st.button("Optimization", type="primary"):
         with st.spinner("최적화 진행 중..."):
             # 상관관계 행렬 계산 (몬테칼로 시뮬레이션에 필요)
             sleeves_list = Current_filtered['SLEEVE'].unique().tolist()
@@ -881,83 +1119,122 @@ if st.session_state.data_loaded and st.session_state.fund_selected:
                     for sleeve, vol in volatilities.items():
                         st.write(f"{sleeve}: {vol:.4f}%")
 
-            # 최적화 실행
-            optimal_weights_raw, optimal_weights_normalized, portfolio_return, portfolio_vol, optimal_duration, weight_changes = optimize_portfolio(
-                Current_filtered, Gr_MinMax_filtered, expected_returns, volatilities,
-                corr_matrix, weight_col, min_col, max_col, objective,
-                risk_free_rate if objective == "Max Sharpe" else 0.0,
-                dur_buffer, portfolio_duration, return_period
-            )
+            # 세 가지 목적함수 모두 실행
+            objectives = ["Max Sharpe", "Min Risk", "Risk Parity"]
+            results = {}
+
+            for obj in objectives:
+                optimal_weights_raw, optimal_weights_normalized, portfolio_return, portfolio_vol, optimal_duration, weight_changes = optimize_portfolio(
+                    Current_filtered, Gr_MinMax_filtered, expected_returns, volatilities,
+                    corr_matrix, weight_col, min_col, max_col, obj,
+                    risk_free_rate if obj == "Max Sharpe" else 0.0,
+                    dur_buffer, portfolio_duration, return_period
+                )
+
+                # 샤프 비율 계산
+                sharpe_ratio = (portfolio_return - risk_free_rate) / portfolio_vol if portfolio_vol > 0 else 0
+
+                results[obj] = {
+                    'optimal_weights': optimal_weights_raw,
+                    'optimal_weights_normalized': optimal_weights_normalized,
+                    'portfolio_return': portfolio_return,
+                    'portfolio_vol': portfolio_vol,
+                    'optimal_duration': optimal_duration,
+                    'weight_changes': weight_changes,
+                    'sharpe_ratio': sharpe_ratio
+                }
 
             # 결과 저장
-            st.session_state.optimal_weights = optimal_weights_raw  # 보정 전
-            st.session_state.optimal_weights_normalized = optimal_weights_normalized  # 보정 후
-            st.session_state.portfolio_return = portfolio_return
-            st.session_state.portfolio_vol = portfolio_vol
-            st.session_state.optimal_duration = optimal_duration
-            st.session_state.weight_changes = weight_changes
+            st.session_state.optimization_results = results
             st.session_state.expected_returns = expected_returns
             st.session_state.volatilities = volatilities
-            if objective == "Max Sharpe":
-                st.session_state.risk_free_rate = risk_free_rate
+            st.session_state.risk_free_rate = risk_free_rate
 
     # 최적화 결과 표시
-    if 'optimal_weights' in st.session_state:
+    if 'optimization_results' in st.session_state:
         st.header("📊 최적화 결과")
 
-        col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            st.metric("기대수익률", f"{st.session_state.portfolio_return:.2f}%")
-        with col2:
-            st.metric("기대변동성", f"{st.session_state.portfolio_vol:.2f}%")
-        with col3:
-            st.metric("최적 듀레이션", f"{st.session_state.optimal_duration:.2f}")
-        with col4:
-            risk_free = st.session_state.get('risk_free_rate', 0.0) if objective == "Max Sharpe" else 0.0
-            sharpe_ratio = (
-                                   st.session_state.portfolio_return - risk_free) / st.session_state.portfolio_vol if st.session_state.portfolio_vol > 0 else 0
-            st.metric("샤프 비율", f"{sharpe_ratio:.2f}")
-
-        # 비중 비교 테이블
-        st.subheader("비중 비교")
-        comparison_data = []
+        results = st.session_state.optimization_results
         current_weights_dict = Current_filtered.set_index('SLEEVE')[weight_col].to_dict()
         total_current = sum(current_weights_dict.values())
 
-        for sleeve in Current_filtered['SLEEVE'].unique():
-            # 현재 비중 (원본 Current 시트의 비중)
-            current_w = current_weights_dict.get(sleeve, 0)
-            # 최적 비중 (원본 Current 시트 기준으로 변환된 비중)
-            optimal_w = st.session_state.optimal_weights.get(sleeve, 0)
-            # 변화량
-            change = st.session_state.weight_changes.get(sleeve, 0)
+        # 통합 결과 테이블 생성
+        comparison_data = []
+        sleeves = Current_filtered['SLEEVE'].unique()
 
-            comparison_data.append({
+        for sleeve in sleeves:
+            current_w = current_weights_dict.get(sleeve, 0)
+
+            row_data = {
                 'SLEEVE': sleeve,
-                '현재 비중': f"{current_w:.2f}",
-                '최적 비중': f"{optimal_w:.2f}",
-                '변화': f"{change:+.2f}"
-            })
+                '현재 비중 (%)': f"{current_w * 100:.2f}%",
+                'Max Sharpe 비중 (%)': f"{results['Max Sharpe']['optimal_weights'].get(sleeve, 0) * 100:.2f}%",
+                'Min Risk 비중 (%)': f"{results['Min Risk']['optimal_weights'].get(sleeve, 0) * 100:.2f}%",
+                'Risk Parity 비중 (%)': f"{results['Risk Parity']['optimal_weights'].get(sleeve, 0) * 100:.2f}%",
+            }
+
+            # 각 목적함수별 변화량
+            row_data['Max Sharpe 변화 (%)'] = f"{results['Max Sharpe']['weight_changes'].get(sleeve, 0) * 100:+.2f}%"
+            row_data['Min Risk 변화 (%)'] = f"{results['Min Risk']['weight_changes'].get(sleeve, 0) * 100:+.2f}%"
+            row_data['Risk Parity 변화 (%)'] = f"{results['Risk Parity']['weight_changes'].get(sleeve, 0) * 100:+.2f}%"
+
+            comparison_data.append(row_data)
 
         comparison_df = pd.DataFrame(comparison_data)
-        st.dataframe(comparison_df, use_container_width=True)
 
-        # 비중 합계 정보
-        total_optimal = sum(st.session_state.optimal_weights.values())
-        st.info(f"현재 비중 합계: {total_current:.2f} | 최적 비중 합계: {total_optimal:.2f}")
+        # 통합 결과 테이블 표시 (CSV 다운로드 버튼 포함)
+        col_title, col_csv = st.columns([10, 1])
+        with col_title:
+            st.subheader("비중 비교 (세 가지 목적함수)")
+        with col_csv:
+            # 한글 인코딩 문제 해결: UTF-8 BOM으로 인코딩
+            csv = comparison_df.to_csv(index=False, encoding='utf-8-sig')
+            csv_bytes = csv.encode('utf-8-sig')
 
-        # 기대수익률 및 변동성 정보
-        st.subheader("Sleeve별 기대수익률 및 변동성")
-        stats_data = []
-        for sleeve in Current_filtered['SLEEVE'].unique():
-            stats_data.append({
-                'SLEEVE': sleeve,
-                '기대수익률 (%)': f"{st.session_state.expected_returns.get(sleeve, 0):.2f}",
-                '변동성 (%)': f"{st.session_state.volatilities.get(sleeve, 0):.2f}"
-            })
-        stats_df = pd.DataFrame(stats_data)
-        st.dataframe(stats_df, use_container_width=True)
+            # 파일명 생성: 위원회_최적화결과_530810_yymmdd.csv
+            latest_date = st.session_state.get('latest_date', pd.Timestamp.today())
+            date_str = latest_date.strftime('%y%m%d')
+            fund_type = st.session_state.fund_selected
+            file_name = f"위원회_최적화결과_{fund_type}_{date_str}.csv"
+
+            st.download_button(
+                label="CSV",
+                data=csv_bytes,
+                file_name=file_name,
+                mime="text/csv;charset=utf-8",
+                key="download_comparison_csv"
+            )
+        st.dataframe(comparison_df, use_container_width=True, hide_index=True)
+
+        # 각 목적함수별 포트폴리오 지표 표시 (행과 열 전치)
+        st.subheader("목적함수별 포트폴리오 지표")
+        metrics_data = {
+            '기대수익률 (%)': [
+                f"{results['Max Sharpe']['portfolio_return']:.2f}",
+                f"{results['Min Risk']['portfolio_return']:.2f}",
+                f"{results['Risk Parity']['portfolio_return']:.2f}"
+            ],
+            '기대변동성 (%)': [
+                f"{results['Max Sharpe']['portfolio_vol']:.2f}",
+                f"{results['Min Risk']['portfolio_vol']:.2f}",
+                f"{results['Risk Parity']['portfolio_vol']:.2f}"
+            ],
+            '듀레이션': [
+                f"{results['Max Sharpe']['optimal_duration']:.2f}",
+                f"{results['Min Risk']['optimal_duration']:.2f}",
+                f"{results['Risk Parity']['optimal_duration']:.2f}"
+            ],
+            '샤프 비율': [
+                f"{results['Max Sharpe']['sharpe_ratio']:.2f}",
+                "-",
+                "-"
+            ]
+        }
+
+        metrics_df = pd.DataFrame(metrics_data, index=["Max Sharpe", "Min Risk", "Risk Parity"])
+        metrics_df = metrics_df.T  # 행과 열 전치
+        st.dataframe(metrics_df, use_container_width=True, hide_index=False)
 
 else:
-    st.info("👈 사이드바에서 엑셀 파일을 업로드하고 펀드를 선택해주세요.")
+    st.info("사이드바에서 엑셀 파일을 업로드하고 펀드를 선택해주세요.")
 
