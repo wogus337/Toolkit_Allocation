@@ -182,9 +182,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+st.markdown('<h1 style="font-size: 4.0rem;">[글로벌자산배분전략위원회] Quantitative Sleeve Allocation</h1>', unsafe_allow_html=True)
+
 # ReadMe 섹션
 st.markdown("""
-    <div style="font-size: 10px;">
+    <div style="font-size: 11px;">
         <strong>ReadMe</strong><br>
         1. 정해진 양식의 엑셀파일을 업로드한 후 최적화를 수행합니다. <br> 
         2. 사이드바에서 펀드(530810 or 530950)를 선택할 수 있습니다. <br> 
@@ -193,8 +195,6 @@ st.markdown("""
         5. 최적화 결과는 테이블로 조회할 수 있고, CSV 파일로 다운로드할 수 있습니다. <br> 
     </div>
 """, unsafe_allow_html=True)
-
-st.title("[글로벌자산배분전략위원회] Quantitative Sleeve Allocation")
 
 # 세션 상태 초기화
 if 'uploaded_file' not in st.session_state:
