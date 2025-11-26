@@ -22,6 +22,11 @@ st.markdown("""
         }
 
         /* 헤더 크기 조정 */
+        
+        bigtitle {
+            font-size: 2.0rem !important;
+        }
+        
         h1 {
             font-size: 1.4rem !important;
         }
@@ -37,6 +42,10 @@ st.markdown("""
         /* 본문 텍스트 */
         p, div, span {
             font-size: 12px !important;
+        }
+        
+        divx {
+            font-size: 14px !important;
         }
 
         /* 메트릭 컴포넌트 */
@@ -182,12 +191,13 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<h1 style="font-size: 20px;">[글로벌자산배분전략위원회] Quantitative Sleeve Allocation</h1>', unsafe_allow_html=True)
+st.markdown('<div class="bigtitle">[글로벌자산배분전략위원회] Quantitative Sleeve Allocation</div>', unsafe_allow_html=True)
 
 # ReadMe 섹션
 st.markdown("""
-    <div style="font-size: 15px;">
-        <strong>ReadMe</strong><br>
+    #<div style="font-size: 15px;">
+    <div class="divx">
+        <strong>[ReadMe]</strong><br>
         1. 정해진 양식의 엑셀파일을 업로드한 후 최적화를 수행합니다. <br> 
         2. 사이드바에서 펀드(530810 or 530950)를 선택할 수 있습니다. <br> 
         3. 최적화의 기대수익률은 과거수익률 활용, 위원회 스코어링 결과 적용, 몬테칼로 시뮬레이션 방법을 선택할 수 있습니다. <br> 
