@@ -24,7 +24,7 @@ st.markdown("""
         /* 헤더 크기 조정 */
         
         bigtitle {
-            font-size: 2.0rem !important;
+            font-size: 4.0rem !important;
         }
         
         h1 {
@@ -194,8 +194,7 @@ st.markdown("""
 st.markdown('<div class="bigtitle">[글로벌자산배분전략위원회] Quantitative Sleeve Allocation</div>', unsafe_allow_html=True)
 
 # ReadMe 섹션
-st.markdown("""
-    #<div style="font-size: 15px;">
+st.markdown("""    
     <div class="divx">
         <strong>[ReadMe]</strong><br>
         1. 정해진 양식의 엑셀파일을 업로드한 후 최적화를 수행합니다. <br> 
