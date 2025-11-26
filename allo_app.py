@@ -867,6 +867,23 @@ with st.sidebar:
     st.header("📁 데이터 업로드")
     uploaded_file = st.file_uploader("엑셀 파일을 업로드하세요", type=['xlsx', 'xls'])
 
+    # 예제 파일 다운로드 링크
+    example_file_path = "images/example.xlsx"
+    if os.path.exists(example_file_path):
+        with open(example_file_path, "rb") as f:
+            example_file_data = f.read()
+            # 텍스트 링크처럼 보이도록 다운로드 버튼 생성
+            st.markdown('<div style="margin-top: 10px;"></div>', unsafe_allow_html=True)
+            st.download_button(
+                label="📥 예제 파일 다운로드",
+                data=example_file_data,
+                file_name="example.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                key="example_file_download"
+            )
+    else:
+        st.caption("예제 파일을 찾을 수 없습니다.")
+
     if uploaded_file is not None:
         if st.session_state.uploaded_file != uploaded_file:
             st.session_state.uploaded_file = uploaded_file
@@ -1236,5 +1253,5 @@ if st.session_state.data_loaded and st.session_state.fund_selected:
         st.dataframe(metrics_df, use_container_width=True, hide_index=False)
 
 else:
-    st.info("사이드바에서 엑셀 파일을 업로드하고 펀드를 선택해주세요.")
+    st.info("사이드바에서 엑셀 파일을 업로드하고 펀드(530810 or 530950)를 선택해주세요.")
 
