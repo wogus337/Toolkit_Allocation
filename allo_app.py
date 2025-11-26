@@ -193,6 +193,7 @@ st.markdown("""
         3. 최적화의 기대수익률은 과거수익률 활용, 위원회 스코어링 결과 적용, 몬테칼로 시뮬레이션 방법을 선택할 수 있습니다. <br> 
         4. 최적화는 Max Sharpe, Min Risk, Risk Parity 세 가지를 적용합니다. <br> 
         5. 최적화 결과는 테이블로 조회할 수 있고, CSV 파일로 다운로드할 수 있습니다. <br> 
+        <br>
     </div>
 """, unsafe_allow_html=True)
 
